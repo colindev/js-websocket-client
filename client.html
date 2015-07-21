@@ -1,0 +1,96 @@
+<meta charset="utf-8">
+<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+<script src="//cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.js"></script>
+<style>
+  label {
+    display: block;
+  }
+  input {
+    width: 500px;
+  }
+</style>
+
+
+<label><input id="socket-url" placeholder="socket server url"></label>
+<label><input id="socket-path" placeholder="socket server path"></label>
+<label><input id="socket-port" placeholder="socket server port (default=80)"></label>
+<label><input id="channel-in" placeholder="channel_name"></label>
+<button id="connection"></button>
+<hr>
+<input id="channel-out" placeholder="channel:message...">
+<button id="send">發送</button>
+<div id="display"></div>
+
+<script>
+
+  (function(
+          $btn_conn, $inp_chan_in, $inp_socket_url, $inp_socket_path, $inp_socket_port, $display,
+          $inp_chan_out, $btn_send){
+
+    var socket;
+
+    $('input')
+      .on('blur', function(){
+        var $self = $(this),
+            name = $self.attr('id'),
+            val = $self.val();
+        $.cookie(name, val);
+      }).each(function(){
+        var $self = $(this),
+            val = $.cookie($self.attr('id'));
+
+            val && $self.val(val);
+      });
+
+    $btn_conn.on('click', function(){
+      if (socket) {
+        socket.disconnect();
+        socket = null;
+        $btn_conn.text('connect');
+      } else {
+        socket = io($inp_socket_url.val(), {
+          path: $inp_socket_path.val(),
+          port: parseInt($inp_socket_port.val(), 10)||80
+        });
+
+        socket.on($inp_chan_in.val(), function(data){
+          $display.text(JSON.stringify(data));
+        });
+        $btn_conn.text('disconnect');
+      }
+    }).text('connect');
+
+    $btn_send.on('click', function(){
+      if ( ! socket) {
+        alert('尚未建立連線!!');
+        return;
+      }
+      $inp_chan_out.val().replace(/^([^:]+):([^\$]+)$/, function(m, $1, $2){
+        socket.emit($1, $2);
+      });
+    });
+
+  })(
+    $('#connection'),
+    $('#channel-in'),
+    $('#socket-url'),
+    $('#socket-path'),
+    $('#socket-port'),
+    $('#display'),
+
+    $('#channel-out'),
+    $('#send')
+  );
+
+
+// var socket = io('http://rde-tech.vir888.com', {path:"/nodews/socket.io"});
+
+//  var channel_inp = document.getElementById('');
+//  socket.on('news', function (data) {
+//    console.log(data);
+//    socket.emit('my other event', { my: 'data' });
+//  });
+</script>
+
+
