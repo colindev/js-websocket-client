@@ -9,26 +9,51 @@
   input {
     width: 500px;
   }
+
+  #display {
+    height: 500px;
+    overflow: scroll;
+    border: 1px solid #EEE;
+    margin-top: 5px;
+  }
+  p.msg {
+    margin: 0.3em;
+    padding: 0.3em;
+    background: #99FF33;
+    border-radius: 10px;
+  }
 </style>
 
+<fieldset>
+  <legend>connect server</legend>
+  <label><input id="socket-url" placeholder="socket server url"></label>
+  <label><input id="socket-path" placeholder="socket server path"></label>
+  <button id="connection"></button>
+</fieldset>
 
-<label><input id="socket-url" placeholder="socket server url"></label>
-<label><input id="socket-path" placeholder="socket server path"></label>
-<label><input id="socket-port" placeholder="socket server port (default=80)"></label>
-<label><input id="channel-in" placeholder="channel_name"></label>
-<button id="connection"></button>
-<hr>
-<input id="channel-out" placeholder="channel:message...">
-<button id="send">發送</button>
-<div id="display"></div>
+<fieldset>
+  <legend>listen channel</legend>
+  <input id="channel-in" placeholder="channel_name">
+  <button id="listen"></button>
+  <div id="display"></div>
+
+</fieldset>
+
+<fieldset>
+  <legend>send</legend>
+  <input id="channel-out" placeholder="channel:message...">
+  <button id="send">發送</button>
+</fieldset>
 
 <script>
 
   (function(
-          $btn_conn, $inp_chan_in, $inp_socket_url, $inp_socket_path, $inp_socket_port, $display,
-          $inp_chan_out, $btn_send){
+          $inp_socket_url, $inp_socket_path, $btn_conn, 
+          $inp_chan_in, $btn_listen, $display,
+          $inp_chan_out, $btn_send,
+          $source_link){
 
-    var socket;
+    var socket, listening;
 
     $('input')
       .on('blur', function(){
@@ -45,21 +70,47 @@
 
     $btn_conn.on('click', function(){
       if (socket) {
+        listening && $btn_listen.click();
         socket.disconnect();
+        
         socket = null;
         $btn_conn.text('connect');
-      } else {
-        socket = io($inp_socket_url.val(), {
-          path: $inp_socket_path.val(),
-          port: parseInt($inp_socket_port.val(), 10)||80
-        });
 
-        socket.on($inp_chan_in.val(), function(data){
-          $display.text(JSON.stringify(data));
-        });
+      } else {
+
+        socket = io($inp_socket_url.val(), {
+          path: $inp_socket_path.val()
+        }).connect();
+
         $btn_conn.text('disconnect');
       }
+
+      $inp_socket_url.val().replace(/:(\d+)$/, function(m, $1){
+        $source_link.attr('href', $source_link.attr('href').replace(/\{port\}/, $1));
+      });
     }).text('connect');
+
+    $btn_listen.on('click', function(){
+      if ( ! socket) {
+        alert('尚未建立連線!!');
+        return;
+      }
+
+      if (listening) {
+        socket.off(listening);
+        listening = null;
+        $btn_listen.text('listen');
+        $inp_chan_in.removeAttr('readonly');
+      } else {
+        $inp_chan_in.attr('readonly', 'readonly');
+        listening = $inp_chan_in.val();
+        socket.on(listening, function(data){
+          $display.append('<p class="msg">'+JSON.stringify(data)+'</p>').animate({scrollTop: $display.get(0).scrollHeight}, 300);
+        });
+        $btn_listen.text('unlisten');
+      }
+      
+    }).text('listen');
 
     $btn_send.on('click', function(){
       if ( ! socket) {
@@ -70,17 +121,25 @@
         socket.emit($1, $2);
       });
     });
+      
+      $inp_chan_out.on('keypress', function(e){
+          e.keyCode === 13 && $btn_send.click();
+      });
 
   })(
-    $('#connection'),
-    $('#channel-in'),
+
     $('#socket-url'),
     $('#socket-path'),
-    $('#socket-port'),
+    $('#connection'),
+
+    $('#channel-in'),
+    $('#listen'),
     $('#display'),
 
     $('#channel-out'),
-    $('#send')
+    $('#send'),
+
+    $('#source-link')
   );
 
 </script>
