@@ -21,6 +21,13 @@
     padding: 0.3em;
     background: #99FF33;
     border-radius: 10px;
+    position: relative;;
+  }
+  p.msg span {
+    font-size: 8px;
+    color: #FFF;
+    position: absolute;
+    top: 0; right: 10px;
   }
 </style>
 
@@ -85,9 +92,6 @@
         $btn_conn.text('disconnect');
       }
 
-      $inp_socket_url.val().replace(/:(\d+)$/, function(m, $1){
-        $source_link.attr('href', $source_link.attr('href').replace(/\{port\}/, $1));
-      });
     }).text('connect');
 
     $btn_listen.on('click', function(){
@@ -105,7 +109,8 @@
         $inp_chan_in.attr('readonly', 'readonly');
         listening = $inp_chan_in.val();
         socket.on(listening, function(data){
-          $display.append('<p class="msg">'+JSON.stringify(data)+'</p>').animate({scrollTop: $display.get(0).scrollHeight}, 300);
+          var d = new Date;
+          $display.append('<p class="msg">'+JSON.stringify(data)+'<span>'+d.toLocaleString()+'</span></p>').animate({scrollTop: $display.get(0).scrollHeight}, 300);
         });
         $btn_listen.text('unlisten');
       }
@@ -137,9 +142,7 @@
     $('#display'),
 
     $('#channel-out'),
-    $('#send'),
-
-    $('#source-link')
+    $('#send')
   );
 
 </script>
