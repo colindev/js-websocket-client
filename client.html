@@ -1,7 +1,16 @@
 <meta charset="utf-8">
 <style>
+  body {
+    background: #DDD;
+  }
+  h6 {
+    margin: 5px;
+    text-align: center;
+  }
+
   fieldset {
-    border: 1px solid #99FF33;
+    border: 1px solid #AAA;
+    background: #EEE;
   }
   fieldset:after {
     content: '.';
@@ -22,7 +31,8 @@
     height: 500px;
     width: 48%;
     overflow: scroll;
-    border: 1px solid #EEE;
+    border: 1px solid #FFF;
+    background: #DDD;
     margin-top: 5px;
   }
   #display {
@@ -45,6 +55,8 @@
     position: absolute;
     top: 0; right: 10px;
   }
+
+  .fixed{clear: both;}
 </style>
 
 <fieldset>
@@ -57,6 +69,8 @@
   <legend>listen channel</legend>
   <input id="channel-in" placeholder="channel_name">
   <button id="listen"></button>
+  <h6>channel msg <------------------> all msg</h6>
+  <div class="fixed"></div>
   <div id="display"></div>
   <div id="all-msg"></div>
 </fieldset>
