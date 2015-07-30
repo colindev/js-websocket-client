@@ -48,29 +48,36 @@
         this.listen = function(chan, callback){
             if ( ! channels[chan]) channels[chan] = [];
             channels[chan].push(callback);
-            var re = new RegExp('^'+chan+':\\s*');
-            me.on('message', function (e) {
-                if (re.test(e.data)) {
-                    var msg = e.data.replace(re, '');
-                    try {
-                        msg = JSON.parse(msg);
-                    } catch (e) {}
-                    for (var i = 0; i < channels[chan].length; i++) {
-                        channels[chan][i](msg, e);
-                    }
-                }
-            });
 
             return me;
         };
 
         this.unlisten = function(chan){
             if (channels[chan]) channels[chan] = [];
+            console.log('unlisten', chan, channels[chan])
             return me;
         };
 
         bindEvents(me, ws, events);
 
+        // for listen
+        me.on('message', function (e) {
+            var m = e.data.match(/^(?:([^:]+):)?\s*([^\$]+)$/);
+
+            if (m) {
+                var chan =m[1],
+                    msg = m[2];
+
+                if ( ! chan || ! channels[chan]) return;
+
+                try {
+                    msg = JSON.parse(msg);
+                } catch (e) {}
+                for (var i = 0; i < channels[chan].length; i++) {
+                    channels[chan][i](msg, e);
+                }
+            }
+        });
     };
     var Socket = {
         connect: function (url) {
