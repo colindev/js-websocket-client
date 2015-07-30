@@ -54,7 +54,6 @@
 
         this.unlisten = function(chan){
             if (channels[chan]) channels[chan] = [];
-            console.log('unlisten', chan, channels[chan])
             return me;
         };
 
