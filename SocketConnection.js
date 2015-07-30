@@ -60,6 +60,13 @@
                     }
                 }
             });
+
+            return me;
+        };
+
+        this.unlisten = function(chan){
+            if (channels[chan]) channels[chan] = [];
+            return me;
         };
 
         bindEvents(me, ws, events);

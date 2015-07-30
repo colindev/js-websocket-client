@@ -1,8 +1,19 @@
 <meta charset="utf-8">
-<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+<script src="/SocketConnection.js" name="Socket"></script>
 <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
-<script src="//cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.cookie/1.4.1/jquery.cookie.js"></script>
 <style>
+  fieldset {
+    border: 1px solid #99FF33;
+  }
+  fieldset:after {
+    content: '.';
+    display: block;
+    height: 0;
+    overflow: hidden;
+    clear: both;
+  }
+
   label {
     display: block;
   }
@@ -10,12 +21,20 @@
     width: 500px;
   }
 
-  #display {
+  #display, #all-msg {
     height: 500px;
+    width: 48%;
     overflow: scroll;
     border: 1px solid #EEE;
     margin-top: 5px;
   }
+  #display {
+    float: left;
+  }
+  #all-msg {
+    float: right;
+  }
+
   p.msg {
     margin: 0.3em;
     padding: 0.3em;
@@ -34,7 +53,6 @@
 <fieldset>
   <legend>connect server</legend>
   <label><input id="socket-url" placeholder="socket server url"></label>
-  <label><input id="socket-path" placeholder="socket server path"></label>
   <button id="connection"></button>
 </fieldset>
 
@@ -43,7 +61,7 @@
   <input id="channel-in" placeholder="channel_name">
   <button id="listen"></button>
   <div id="display"></div>
-
+  <div id="all-msg"></div>
 </fieldset>
 
 <fieldset>
@@ -55,10 +73,9 @@
 <script>
 
   (function(
-          $inp_socket_url, $inp_socket_path, $btn_conn, 
-          $inp_chan_in, $btn_listen, $display,
-          $inp_chan_out, $btn_send,
-          $source_link){
+          $inp_socket_url, $btn_conn,
+          $inp_chan_in, $btn_listen, $display, $all_msg,
+          $inp_chan_out, $btn_send){
 
     var socket, listening;
 
@@ -78,16 +95,19 @@
     $btn_conn.on('click', function(){
       if (socket) {
         listening && $btn_listen.click();
-        socket.disconnect();
-        
+        socket.close();
         socket = null;
+
         $btn_conn.text('connect');
 
       } else {
 
-        socket = io($inp_socket_url.val(), {
-          path: $inp_socket_path.val()
-        }).connect();
+        socket = Socket.connect($inp_socket_url.val());
+        $all_msg.empty();
+
+        socket.on('message', function (e) {
+          $all_msg.append('<p class="msg">'+JSON.stringify(e.data)+'<span>'+(new Date).toLocaleString()+'</span></p>').animate({scrollTop: $all_msg.get(0).scrollHeight}, 300);
+        });
 
         $btn_conn.text('disconnect');
       }
@@ -101,32 +121,35 @@
       }
 
       if (listening) {
-        socket.off(listening);
+        socket.unlisten(listening);
         listening = null;
         $btn_listen.text('listen');
         $inp_chan_in.removeAttr('readonly');
       } else {
         $inp_chan_in.attr('readonly', 'readonly');
         listening = $inp_chan_in.val();
-        socket.on(listening, function(data){
-          var d = new Date;
-          $display.append('<p class="msg">'+JSON.stringify(data)+'<span>'+d.toLocaleString()+'</span></p>').animate({scrollTop: $display.get(0).scrollHeight}, 300);
+        $display.empty();
+        socket.listen(listening, function(data){
+          $display.append('<p class="msg">'+JSON.stringify(data)+'<span>'+(new Date).toLocaleString()+'</span></p>').animate({scrollTop: $display.get(0).scrollHeight}, 300);
         });
         $btn_listen.text('unlisten');
       }
       
     }).text('listen');
 
+
+
     $btn_send.on('click', function(){
       if ( ! socket) {
         alert('尚未建立連線!!');
         return;
       }
-      $inp_chan_out.val().replace(/^([^:]+):([^\$]+)$/, function(m, $1, $2){
-        socket.emit($1, $2);
-      });
+
+      socket.emit($inp_chan_out.val());
+      $inp_chan_out.val('');
+
     });
-      
+
       $inp_chan_out.on('keypress', function(e){
           e.keyCode === 13 && $btn_send.click();
       });
@@ -134,12 +157,12 @@
   })(
 
     $('#socket-url'),
-    $('#socket-path'),
     $('#connection'),
 
     $('#channel-in'),
     $('#listen'),
     $('#display'),
+    $('#all-msg'),
 
     $('#channel-out'),
     $('#send')
