@@ -58,7 +58,7 @@
 
   .fixed{clear: both;}
 </style>
-
+<form><input type="text" id="resource" name="resource" value="/socket/SocketConnection.js"><button type="submit">更換resource</button></form>
 <fieldset>
   <legend>connect server</legend>
   <label><input id="socket-url" placeholder="socket server url"></label>
@@ -112,8 +112,10 @@
         $.cookie(name, val);
       }).each(function(){
         var $self = $(this),
-            val = $.cookie($self.attr('id'));
-
+            id = $self.attr('id'),
+            val = '';
+            if ( ! id) return;
+            val = $.cookie(id);
             val && $self.val(val);
       });
 
