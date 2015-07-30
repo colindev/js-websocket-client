@@ -8,21 +8,20 @@
 
 ```html
 
-<script src="http://colin.test:8000" name="SC"></script>
+<script src="path/to/SocketConnection.js" name="SC"></script>
 <script>(function(){if (this.SC) {
-        var conn = SC.connect('ws://your.websocket.url');
-        conn.on('message', function(e){
-                console.log(e.data);
-        });
+    var conn = SC.connect('ws://your.websocket.url');
+    conn.on('message', function(e){
+        console.log(e.data);
+    });
 
-        conn.on('open', function(){
+    conn.on('open', function(){
+        conn.emit({hello:'world'});
+    });
 
-                conn.emit({hello:'world'});
-        });
-
-        conn.listen('news', function(msg, e){
-                console.log(msg)
-        });
+    conn.listen('news', function(msg, e){
+        console.log(msg)
+    });
 }})();</script>
 
 ```
