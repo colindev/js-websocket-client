@@ -30,6 +30,13 @@
 
 [測試界面]
 
-[測試界面]:http://rde-tech.vir888.com/socket/client.html
-[SocketConnection.js]:SocketConnection.js
+### 線上測試
 
+```html
+<script src="http://your.domain.to/test-001.min.js"></script>
+```
+[test-001.min.js]
+
+[測試界面]:http://rde-tech.vir888.com/socket/client.html
+[SocketConnection.js]:src/SocketConnection.js
+[test-001.min.js]:test-001.min.js
