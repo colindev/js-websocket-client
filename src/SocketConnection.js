@@ -1,4 +1,20 @@
-;(function(ns, WebSocket){
+;(function(o){
+
+    o = o(this.WebSocket);
+
+    if (typeof module == 'object') {
+        module.exports = o;
+    }
+
+    var scripts = document.getElementsByTagName('script'),
+        dom = scripts[scripts.length - 1],
+        export_name = dom && dom.getAttribute('name');
+
+    if (export_name) {
+        this[export_name] = o;
+    }
+
+})(function(WebSocket){
     if ( ! WebSocket) return;
 
     var re_event = /^on(.+)$/;
@@ -77,11 +93,10 @@
                 }
             }
         });
-    };
-    var Socket = {
-        connect: function (url) {
-            return new Conn(url);
-        }
+
+        me.on('close', function(){
+            me.close();
+        });
     };
 
     function bindEvents(o, ws, events) {
@@ -103,12 +118,10 @@
         }
     }
 
-    var scripts = document.getElementsByTagName('script'),
-        dom = scripts[scripts.length - 1],
-        export_name = dom && dom.getAttribute('name');
+    return {
+        connect: function (url) {
+            return new Conn(url);
+        }
+    };
 
-    if (export_name) {
-        ns[export_name] = Socket;
-    }
-
-})(self, self.WebSocket);
+});
