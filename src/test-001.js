@@ -37,12 +37,12 @@ var Socket = require('./SocketConnection.js'),
                 data_travel_ms = (((new Date).getTime() - ping_ms) / 2) >> 0;
 
                 // 計算與 server 毫秒差
-                server_diff_ms = ping_ms - in_ms - data_travel_ms;
+                server_diff_ms = ping_ms + data_travel_ms - in_ms;
 
                 console.log({
                     now: (new Date).getTime(),
                     ping_ms: ping_ms,
-                    in_ms: in_ms,
+                    'pong:in': in_ms,
                     data_travel_ms: data_travel_ms,
                     server_diff_ms: server_diff_ms
                 })
@@ -51,7 +51,7 @@ var Socket = require('./SocketConnection.js'),
                 pong_ms = parseInt($1);
 
                 console.log({
-                    pong_ms: pong_ms
+                    'pong:out': pong_ms
                 })
             });
     });
@@ -59,7 +59,7 @@ var Socket = require('./SocketConnection.js'),
     ws.listen('broadcast-ping', function(msg){
         var reply;
 
-        ws.emit(reply = 'broadcast-pong:'+((new Date).getTime()+server_diff_ms));
+        ws.emit(reply = 'broadcast-pong:'+((new Date).getTime() - server_diff_ms));
 
         console.log('emit: ['+reply+']');
     });
@@ -71,7 +71,7 @@ var Socket = require('./SocketConnection.js'),
     function ping(){
         var reply;
         ping_ms = (new Date).getTime();
-        ws.emit(reply = 'ping:'+(ping_ms+server_diff_ms));
+        ws.emit(reply = 'ping:'+(ping_ms - server_diff_ms));
 
         console.log('emit: ['+reply+']');
     }
