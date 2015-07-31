@@ -8,17 +8,24 @@ var Socket = require('./SocketConnection.js'),
         //url = 'ws://colin.test:8001/',
         key = sha1(new Date).replace(/^(\w{7}).+$/, '$1');
 
-    test(url+'?key='+key, 10);
+    test(url+'?key='+key, 10, this.console ? function(){console.log.apply(console, arguments)} : function(){});
 
-})(function(url, intval){
+})(function(url, intval, echo){
 
     var ws = Socket.connect(url),
         // 單趟封包傳遞時間
         data_travel_ms = 0,
         // server 跟 local 毫秒差
         server_diff_ms = 0,
+        // 發出訊息時間點(client)
         ping_ms = 0,
+        // 收到訊息時間點(client)
         pong_ms = 0,
+        // 收到訊息時間點(server)
+        in_ms = 0,
+        // 發出訊息時間點(server)
+        out_ms = 0,
+        guess_server_in_ms = 0,
         timer;
 
     if ( ! ws) return;
@@ -31,27 +38,31 @@ var Socket = require('./SocketConnection.js'),
     ws.listen('pong', function(msg){
         msg.
             replace(/in:(\d+)/, function(m, $1){
-                var in_ms = parseInt($1);
+
+                pong_ms = (new Date).getTime();
+
+                in_ms = parseInt($1);
 
                 // 計算封包單趟毫秒
                 data_travel_ms = (((new Date).getTime() - ping_ms) / 2) >> 0;
 
                 // 計算與 server 毫秒差
-                server_diff_ms = ping_ms + data_travel_ms - in_ms;
+                server_diff_ms = in_ms - (ping_ms + data_travel_ms);
 
-                console.log({
-                    now: (new Date).getTime(),
+                echo({
+                    pong_ms: pong_ms,
                     ping_ms: ping_ms,
                     'pong:in': in_ms,
                     data_travel_ms: data_travel_ms,
-                    server_diff_ms: server_diff_ms
+                    server_diff_ms: server_diff_ms,
+                    guess_server_in_ms: guess_server_in_ms,
+                    guess_miss_ms: guess_server_in_ms - in_ms
                 })
             }).
             replace(/out:(\d+)/, function(m, $1){
-                pong_ms = parseInt($1);
-
-                console.log({
-                    'pong:out': pong_ms
+                out_ms = parseInt($1);
+                echo({
+                    'pong:out': out_ms
                 })
             });
     });
@@ -61,7 +72,7 @@ var Socket = require('./SocketConnection.js'),
 
         ws.emit(reply = 'broadcast-pong:'+((new Date).getTime() - server_diff_ms));
 
-        console.log('emit: ['+reply+']');
+        echo('emit: ['+reply+']');
     });
 
     ws.on('close', function () {
@@ -71,9 +82,13 @@ var Socket = require('./SocketConnection.js'),
     function ping(){
         var reply;
         ping_ms = (new Date).getTime();
-        ws.emit(reply = 'ping:'+(ping_ms - server_diff_ms));
+        guess_server_in_ms = ping_ms + server_diff_ms;
+        ws.emit(reply = 'ping:'+guess_server_in_ms);
 
-        console.log('emit: ['+reply+']');
+        echo({
+            emit: reply,
+            ping_ms: ping_ms
+        });
     }
 
 });
