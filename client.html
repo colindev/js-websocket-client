@@ -86,14 +86,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
   var resource = 'socket.min.js';
+  var acync;
   location.href.replace(/\?(.+)$/, function(m, $1){
     $1.replace(/([^\^&=]+)(=[^&\$]+)?/g, function(m, $1, $2){
       $2 = $2 && $2.replace(/^=/, '');
 
       if ('resource' == $1) resource = $2;
+
+      $1.replace(/^async(\[\])?$/, function(m, $1){
+        if ($1) {
+          if ( ! acync || ! acync.push) acync = [];
+          acync.push($2);
+        } else {
+          acync = [$2];
+        }
+      });
+
     });
   });
   document.write('<script src="'+resource+'" name="Socket"><\/script>');
+  acync.forEach(function(href){
+    document.write('<script src="'+resource+'" name="Socket"><\/script>');
+  });
 </script>
 <script>
 

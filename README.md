@@ -33,7 +33,7 @@
 ### 線上測試
 
 ```html
-<script src="http://your.domain.to/test-001.min.js"></script>
+<script src="http://rde-tech.vir888.com/socket/test-001.min.js"></script>
 ```
 [test-001.min.js]
 
