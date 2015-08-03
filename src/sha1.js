@@ -1,12 +1,12 @@
 (function(o){
 
+    var self_attr = require('./self_attr');
+
     if (typeof module == 'object') {
         module.exports = o;
     }
 
-    var scripts = document.getElementsByTagName('script'),
-        dom = scripts[scripts.length - 1],
-        export_name = dom && dom.getAttribute('name');
+    var export_name = self_attr('name');
 
     if (export_name) {
         this[export_name] = o;

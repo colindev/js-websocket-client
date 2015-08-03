@@ -1,17 +1,19 @@
+;(function(test){
 
-var Socket = require('./SocketConnection.js'),
-    sha1 = require('./sha1.js');
+    var sha1 = require('./sha1.js'),
+        self_attr = require('./self_attr'),
+        url = self_attr('ws-url') || 'ws://rde-tech.vir888.com:81/gows/',
+        key;
 
-(function(test){
-
-    var url = 'ws://rde-tech.vir888.com:81/gows/',
-        //url = 'ws://colin.test:8001/',
-        key = sha1(new Date).replace(/^(\w{7}).+$/, '$1');
+    key = document && document.cookie && document.cookie.match(/PHPSESSID=([^;]+)/);
+    key = key ? key[1] : new Date;
+    key = sha1(key).replace(/^(\w{7}).+$/, '$1');
 
     test(url+'?key='+key, 10, this.console ? function(){console.log.apply(console, arguments)} : function(){});
 
 })(function(url, intval, echo){
 
+    var Socket = require('./SocketConnection.js');
     var ws = Socket.connect(url),
         // 單趟封包傳遞時間
         data_travel_ms = 0,
@@ -82,7 +84,7 @@ var Socket = require('./SocketConnection.js'),
     function ping(){
         var reply;
         ping_ms = (new Date).getTime();
-        guess_server_in_ms = ping_ms + server_diff_ms;
+        guess_server_in_ms = ping_ms + server_diff_ms + data_travel_ms;
         ws.emit(reply = 'ping:'+guess_server_in_ms);
 
         echo({
