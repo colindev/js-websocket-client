@@ -48,5 +48,5 @@ ws-interval="5"
 
 [測試界面]:http://rde-tech.vir888.com/socket/client.html
 [SocketConnection.js]:src/SocketConnection.js
-[test-001.min.js]:src/test-001.js
+[test-001.js]:src/test-001.js
 [test-001.html]:http://rde-tech.vir888.com/socket/test-001.html?src=test-001.min.js&ws-url=ws://rde-tech.vir888.com:81/gows/
