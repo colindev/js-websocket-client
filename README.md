@@ -39,6 +39,7 @@
 <script 
 src="http://rde-tech.vir888.com/socket/test-001.min.js"
 ws-url="ws://another.websocket.url"
+ws-interval="5"
 ></script>
 ```
 
