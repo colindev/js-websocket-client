@@ -3,13 +3,14 @@
     var sha1 = require('./sha1.js'),
         self_attr = require('./self_attr'),
         url = self_attr('ws-url') || 'ws://rde-tech.vir888.com:81/gows/',
+        interval = parseInt(self_attr('ws-interval')) || 10,
         key;
 
     key = document && document.cookie && document.cookie.match(/PHPSESSID=([^;]+)/);
     key = key ? key[1] : new Date;
     key = sha1(key).replace(/^(\w{7}).+$/, '$1');
 
-    test(url+'?key='+key, 10, this.console ? function(){console.log.apply(console, arguments)} : function(){});
+    test(url+'?key='+key, interval, this.console ? function(){console.log.apply(console, arguments)} : function(){});
 
 })(function(url, intval, echo){
 

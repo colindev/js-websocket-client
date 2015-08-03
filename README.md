@@ -1,8 +1,9 @@
 # Socket Client
 
-此專案提供兩個工具
-1. [SocketConnection.js]
-2. [測試界面]
+此專案提供工具
+1. [SocketConnection.js] Client 端連線工具
+2. [測試界面] Client 端連線測試界面
+3. [test-001.js] Client 端嵌入式測試工具
 
 ### demo SocketConnection.js
 
@@ -34,9 +35,13 @@
 
 ```html
 <script src="http://rde-tech.vir888.com/socket/test-001.min.js"></script>
+<!-- or -->
+<script 
+src="http://rde-tech.vir888.com/socket/test-001.min.js"
+ws-url="ws://another.websocket.url"
+></script>
 ```
-[test-001.min.js]
 
 [測試界面]:http://rde-tech.vir888.com/socket/client.html
 [SocketConnection.js]:src/SocketConnection.js
-[test-001.min.js]:test-001.min.js
+[test-001.min.js]:src/test-001.js
