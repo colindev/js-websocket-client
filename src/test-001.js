@@ -72,8 +72,9 @@
 
     ws.listen('broadcast-ping', function(msg){
         var reply;
+        var payload = msg.replace(/:?out:\d+$/, '');
 
-        ws.emit(reply = 'broadcast-pong:'+((new Date).getTime() + server_diff_ms + data_travel_ms));
+        ws.emit(reply = 'broadcast-pong:'+payload+((new Date).getTime() + server_diff_ms + data_travel_ms));
 
         echo('emit: ['+reply+']');
     });
