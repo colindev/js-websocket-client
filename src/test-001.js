@@ -74,6 +74,8 @@
         var reply;
         var payload = msg.replace(/:?out:\d+$/, '');
 
+        payload = payload && payload+':';
+
         ws.emit(reply = 'broadcast-pong:'+payload+((new Date).getTime() + server_diff_ms + data_travel_ms));
 
         echo('emit: ['+reply+']');
