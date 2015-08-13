@@ -15,6 +15,8 @@
 })(function(url, intval, echo){
 
     var Socket = require('./SocketConnection.js');
+    if ( ! Socket) return;
+
     var ws = Socket.connect(url),
         // 單趟封包傳遞時間
         data_travel_ms = 0,
