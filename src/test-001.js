@@ -2,9 +2,11 @@
 
     var sha1 = require('./sha1.js'),
         self_attr = require('./self_attr'),
-        url = self_attr('ws-url') || 'ws://rde-tech.vir888.com:81/gows/',
+        url = self_attr('ws-url') || false,
         interval = parseInt(self_attr('ws-interval')) || 10,
         key;
+
+    if ( ! url) return;
 
     key = document && document.cookie && document.cookie.match(/PHPSESSID=([^;]+)/);
     key = key ? key[1] : new Date;
