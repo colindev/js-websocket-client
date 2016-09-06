@@ -1,63 +1,6 @@
 <meta charset="utf-8">
-<style>
-  body {
-    background: #DDD;
-  }
-  h6 {
-    margin: 5px;
-    text-align: center;
-  }
 
-  fieldset {
-    border: 1px solid #AAA;
-    background: #EEE;
-  }
-  fieldset:after {
-    content: '.';
-    display: block;
-    height: 0;
-    overflow: hidden;
-    clear: both;
-  }
-
-  label {
-    display: block;
-  }
-  input {
-    width: 500px;
-  }
-
-  #display, #all-msg {
-    height: 500px;
-    width: 48%;
-    overflow: scroll;
-    border: 1px solid #FFF;
-    background: #DDD;
-    margin-top: 5px;
-  }
-  #display {
-    float: left;
-  }
-  #all-msg {
-    float: right;
-  }
-
-  p.msg {
-    margin: 0.3em;
-    padding: 0.3em;
-    background: #99FF33;
-    border-radius: 10px;
-    position: relative;;
-  }
-  p.msg span {
-    font-size: 8px;
-    color: #FFF;
-    position: absolute;
-    top: 0; right: 10px;
-  }
-
-  .fixed{clear: both;}
-</style>
+<link href="style.css" rel="stylesheet">
 <form><input type="text" id="resource" name="resource" value="SocketConnection.js"><button type="submit">更換resource</button></form>
 <fieldset>
   <legend>connect server</legend>
@@ -69,10 +12,14 @@
   <legend>listen channel</legend>
   <input id="channel-in" placeholder="channel_name">
   <button id="listen"></button>
-  <h6>channel msg <------------------> all msg</h6>
-  <div class="fixed"></div>
-  <div id="display"></div>
-  <div id="all-msg"></div>
+  <!-- <h6>channel msg <----------------- all msg</h6> -->
+  <!-- <div class="fixed"></div> -->
+  <div class="box">
+    <span>channel msg <</span>
+    <span>> all msg</span>
+    <div id="display"></div>
+    <div id="all-msg"></div>
+  </div>
 </fieldset>
 
 <fieldset>
@@ -184,7 +131,7 @@
         });
         $btn_listen.text('unlisten');
       }
-      
+
     }).text('listen');
 
 
@@ -219,5 +166,3 @@
   );
 
 </script>
-
-
