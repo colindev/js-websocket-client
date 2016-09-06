@@ -26,27 +26,3 @@
 }})();</script>
 
 ```
-
-### demo UI
-
-[測試界面]
-
-### 線上測試
-
-```html
-<script src="http://rde-tech.vir888.com/socket/test-001.min.js"></script>
-<!-- or -->
-<script 
-src="http://rde-tech.vir888.com/socket/test-001.min.js"
-ws-url="ws://another.websocket.url"
-ws-interval="5"
-></script>
-```
-
-[test-001.html] Demo
-
-
-[測試界面]:http://rde-tech.vir888.com/socket/client.html
-[SocketConnection.js]:src/SocketConnection.js
-[test-001.js]:src/test-001.js
-[test-001.html]:http://rde-tech.vir888.com/socket/test-001.html?src=test-001.min.js&ws-url=ws://rde-tech.vir888.com:81/gows/
