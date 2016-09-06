@@ -1,9 +1,10 @@
 # Socket Client
 
 此專案提供工具
-1. [SocketConnection.js] Client 端連線工具
-2. [測試界面] Client 端連線測試界面
-3. [test-001.js] Client 端嵌入式測試工具
+
+- [SocketConnection.js] Client 端連線工具
+- [測試界面] Client 端連線測試界面
+- [test-001.js] Client 端嵌入式測試工具
 
 ### demo SocketConnection.js
 
