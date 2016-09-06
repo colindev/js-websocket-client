@@ -6,7 +6,9 @@
 - [測試界面] Client 端連線測試界面
 - [test-001.js] Client 端嵌入式測試工具
 
-### demo SocketConnection.js
+### Usage 
+
+##### SocketConnection.js
 
 ```html
 
@@ -27,3 +29,7 @@
 }})();</script>
 
 ```
+
+### Online Test UI
+
+[WebSocket Test UI](https://colindev.github.io/socket/client.html)
